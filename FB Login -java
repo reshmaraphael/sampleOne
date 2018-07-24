@@ -1,0 +1,92 @@
+package com.Starting;
+
+import org.testng.annotations.Test;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterSuite;
+
+public class NewFBTest {
+	WebDriver dr;
+
+  @Parameters({"username","pass"})
+  @Test(priority=1,timeOut= 15000,description="FB login error check",groups="sanity")
+  public void facebookLogin(String username, String password) throws InterruptedException {
+	  
+	  WebElement emailId= dr.findElement(By.id("email"));
+	  emailId.clear();
+	  emailId.sendKeys(username);
+	  WebElement pass= dr.findElement(By.id("pass"));
+	  pass.clear();
+	  pass.sendKeys(password);	
+		  pass.submit();	
+		  Thread.sleep(2000);
+		  String actual = dr.findElement(By.partialLinkText("Recover")).getText();
+		  System.out.println(actual);
+		  Assert.assertEquals(actual,"Recover Your Account");
+		//  fail("failed");
+  }
+  @Test(priority=2,description="Forgot login check")
+  public void facebookForgot()
+  {
+	  System.out.println("Test 2");
+      dr.findElement(By.partialLinkText("Forgot")).click();
+      
+      boolean actual = dr.findElement(By.id("identify_email")).isDisplayed();
+		  System.out.println(actual);
+		  
+		  Assert.assertEquals(actual,true);
+
+  }
+  @Test(description="dependent test sample",dependsOnMethods="facebookLogin")
+  public void test3(){
+	  System.out.println("Sample dependant test");
+  }
+  @BeforeMethod(alwaysRun=true)
+  public void beforeMethod() {
+	  dr=new FirefoxDriver();
+	  dr.get("http://www.facebook.com");
+  }
+
+  @AfterMethod(alwaysRun=true)
+  public void afterMethod() {
+	  dr.close();
+  }
+
+  @BeforeClass
+  public void beforeClass() {
+  }
+
+  @AfterClass
+  public void afterClass() {
+  }
+
+  @BeforeTest
+  public void beforeTest() {
+  }
+
+  @AfterTest
+  public void afterTest() {
+  }
+
+  @BeforeSuite
+  public void beforeSuite() {
+  }
+
+  @AfterSuite
+  public void afterSuite() {
+  }
+
+}
